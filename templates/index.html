@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Career Advisor System</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>Career Advisor System</h2>
+    <label>Stream:</label>
+    <input type="text" id="stream" value="Science"><br>
+
+    <label>Interest:</label>
+    <input type="text" id="interest"><br>
+
+    <button onclick="predictCareer()">Predict Career</button>
+
+    <h3>Prediction: <span id="result"></span></h3>
+
+    <script>
+        function predictCareer() {
+            var stream = $("#stream").val();
+            var interest = $("#interest").val();
+
+            $.post("/predict", {stream: stream, interest: interest}, function(data) {
+                if (data.career) {
+                    $("#result").text(data.career);
+                } else {
+                    $("#result").text("Error: " + data.error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
