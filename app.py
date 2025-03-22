@@ -12,7 +12,7 @@ app = Flask(__name__)
 def home():
     return render_template('index.html')
 
-# ✅ REPLACE THE OLD PREDICT FUNCTION WITH THIS:
+
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
@@ -20,17 +20,17 @@ def predict():
         stream = data.get('stream')
         interest = data.get('interest')
 
-        # Check if input values exist in trained LabelEncoders
+        
         if stream not in le_stream.classes_:
             return jsonify({'error': f"Stream '{stream}' is not in the trained model."})
         if interest not in le_interest.classes_:
             return jsonify({'error': f"Interest '{interest}' is not in the trained model."})
 
-        # Convert inputs to numerical values
+        
         stream_encoded = le_stream.transform([stream])[0]
         interest_encoded = le_interest.transform([interest])[0]
 
-        # Predict career
+       
         prediction = model.predict(np.array([[stream_encoded, interest_encoded]]))
         career = le_career.inverse_transform(prediction)[0]
 
