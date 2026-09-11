@@ -1,12 +1,15 @@
-import pandas as pd
+from pathlib import Path
+
 import joblib
+import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 
-DATA_PATH = "career_pred.csv"
-MODEL_PATH = "career_model.joblib"
+BASE_DIR = Path(__file__).resolve().parent
+DATA_PATH = BASE_DIR / "career_pred.csv"
+MODEL_PATH = BASE_DIR / "career_model.joblib"
 
 FEATURES = [
     "sslc", "hsc", "cgpa", "school_type", "no_of_miniprojects", "no_of_projects",
@@ -24,7 +27,6 @@ def load_data():
     df = df.dropna(subset=["ROLE"]).copy()
     df["ROLE"] = df["ROLE"].astype(str).str.strip()
     df = df[df["ROLE"] != ""]
-
     for column in FEATURES:
         df[column] = pd.to_numeric(df[column], errors="coerce")
     return df.dropna(subset=FEATURES)
@@ -58,12 +60,7 @@ def train():
     print("\nClassification report:\n")
     print(classification_report(y_test, predictions, target_names=encoder.classes_, zero_division=0))
 
-    artifact = {
-        "model": model,
-        "label_encoder": encoder,
-        "features": FEATURES,
-        "accuracy": float(accuracy),
-    }
+    artifact = {"model": model, "label_encoder": encoder, "features": FEATURES, "accuracy": float(accuracy)}
     joblib.dump(artifact, MODEL_PATH)
     print(f"Saved model to {MODEL_PATH}")
     return artifact
